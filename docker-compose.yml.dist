@@ -1,0 +1,58 @@
+services:
+
+  # MySQL Server + Initial Database Load
+  database:
+    image: mysql
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    volumes:
+      - ./cache/initial-db:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+      - MYSQL_ROOT_HOST
+    restart: always
+  
+  # Doctrine Migrations 
+  database-migrations:
+    build: .
+    volumes:
+      - ./.env:/var/www/.env
+      - ./bootstrap.php:/var/www/bootstrap.php
+      - ./cache:/var/www/cache
+      - ./config:/var/www/config
+      - ./src:/var/www/src
+      - ./vendor:/var/www/vendor
+    entrypoint: sh -c '/wait; php vendor/bin/doctrine-migrations'
+    depends_on:
+      - database
+    environment:
+      - WAIT_HOSTS
+      - WAIT_SLEEP_INTERVAL
+      - WAIT_AFTER
+    restart: "no"
+
+  # Main HTTP Server
+  server:
+    build: .
+    ports:
+      - ${CONTAINER_PORT}:${APP_PORT}
+    volumes:
+      - ./.env:/var/www/.env
+      - ./bootstrap.php:/var/www/bootstrap.php
+      - ./cache:/var/www/cache
+      - ./config:/var/www/config
+      - ./server.php:/var/www/server.php
+      - ./src:/var/www/src
+      - ./vendor:/var/www/vendor
+    environment:
+      - WAIT_HOSTS
+      - WAIT_SLEEP_INTERVAL
+      - WAIT_AFTER
+    depends_on:
+      database-migrations:
+        condition: service_completed_successfully
+    restart: always
+
+volumes:
+  dvdsales_db:

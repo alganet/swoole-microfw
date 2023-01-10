@@ -9,7 +9,7 @@ $builder = new \DI\ContainerBuilder();
 $builder->addDefinitions(__DIR__ . '/config/config.php');
 $builder->useAutowiring(true);
 
-if ($_ENV['app_cache'] ?? 'off' === 'on') {
+if ($_ENV['APP_CACHE'] ?? 'off' === 'on') {
     $builder->enableCompilation(__DIR__ . '/cache/di');
 }
 

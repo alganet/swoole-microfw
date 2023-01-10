@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
@@ -16,6 +17,9 @@ return [
     'app.environment' => 'dev',
     'app.port' => intval($_ENV['APP_PORT']),
     'app.cache' => $_ENV['APP_CACHE'],
+
+    /* Models autowiring */
+    'DvdSales\\Models\\*' => \DI\autowire(),
 
     /* The main() */
     Application::class => DI\autowire(),
@@ -44,6 +48,7 @@ return [
             'port' => intval($_ENV['MYSQL_PORT']),
             'driver' => 'pdo_mysql',
         ]),
+    QueryBuilder::class => \DI\autowire(),
 
     /* Doctrine Migrations DI */
     DependencyFactory::class => fn(DI\Container $c)

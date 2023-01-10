@@ -10,6 +10,7 @@ docker + docker-compose. Then, just do:
 
 ```sh
 $ make               # run composer, download extras, etc
+$ make test          # run unit tests
 $ docker-compose up  # run it
 ```
 

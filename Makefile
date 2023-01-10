@@ -23,7 +23,7 @@ clean:
 	@docker-compose rm -s -f -v >/dev/null 2>&1 || :
 
 test:
-	@vendor/bin/phpunit
+	@docker run --rm -it -w/src -v"$$PWD:/src" phpswoole/swoole:5.0-php8.2-alpine vendor/bin/phpunit
 
 docker:
 	@docker-compose up
